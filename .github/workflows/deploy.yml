@@ -19,21 +19,21 @@ jobs:
       with:
         distribution: 'zulu'
         java-version: 16
-        
+
     - name: Cache Maven packages
       uses: actions/cache@v2.1.6
       with:
         path: ~/.m2
         key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
         restore-keys: ${{ runner.os }}-m2
-        
+
     - name: Set maven settings.xml
       uses: whelk-io/maven-settings-xml-action@v18
       with:
         servers: '[{ "id": "github", "username": "x-access-token", "password": "${{ secrets.GITHUB_TOKEN }}" }]'
-        
+
     - name: Verify with Maven
-      run: mvn -B clean verify --file pom.xml
-      
+      run: mvn -B clean verify --file pom.xml -U
+
     - name: Publish Package
       run: mvn -B deploy
