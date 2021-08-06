@@ -12,8 +12,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.platform.runner.JUnitPlatform;
-import org.junit.runner.RunWith;
 
 /**
  * Tests the {@link OntologyConnector}. As the {@link OntologyConnector} is only a utility class mostly using the Apache
@@ -23,7 +21,6 @@ import org.junit.runner.RunWith;
  * @author Jan Keim
  *
  */
-@RunWith(JUnitPlatform.class)
 class OntologyConnectorTest {
     private static String ontologyPath = "src/test/resources/mediastore.owl";
 
