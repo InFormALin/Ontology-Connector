@@ -8,8 +8,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -34,7 +32,6 @@ import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.StmtIterator;
 import org.apache.jena.reasoner.ReasonerRegistry;
 import org.apache.jena.reasoner.ValidityReport;
-import org.apache.jena.reasoner.ValidityReport.Report;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.shared.Lock;
 import org.apache.jena.vocabulary.OWL;
@@ -117,9 +114,9 @@ public class OntologyConnector implements OntologyInterface {
         if (validity.isValid()) {
             return true;
         }
-        Iterator<Report> i = validity.getReports();
-        while (i.hasNext()) {
-            logger.warn("Conflict in ontology: {}", i.next());
+        var reports = validity.getReports();
+        while (reports.hasNext()) {
+            logger.warn("Conflict in ontology: {}", reports.next());
         }
         return false;
     }
@@ -1499,7 +1496,7 @@ public class OntologyConnector implements OntologyInterface {
             ontModel.leaveCriticalSection();
         }
 
-        var resList = new ArrayList<Resource>();
+        List<Resource> resList = Lists.mutable.empty();
         while (stmtIterator != null && stmtIterator.hasNext()) {
             Resource subject = null;
 
