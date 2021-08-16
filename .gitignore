@@ -1,3 +1,6 @@
+catalog-v*.xml
+
+
 ###Maven###
 
 target/
