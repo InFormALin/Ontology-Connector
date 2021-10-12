@@ -1405,18 +1405,21 @@ public class OntologyConnector implements OntologyInterface {
      */
     @Override
     public Optional<Integer> getPropertyIntValue(Individual individual, OntProperty property) {
-        var node = getPropertyValue(individual, property);
-
         ontModel.enterCriticalSection(Lock.READ);
         try {
-            if (node.canAs(Literal.class)) {
-                var literal = node.asLiteral();
-                try {
-                    return Optional.of(literal.getInt());
-                } catch (NotLiteral | NumberFormatException e) {
-                    return Optional.empty();
+            var properties = individual.listPropertyValues(property);
+            while (properties.hasNext()) {
+                var node = properties.next();
+                if (node.canAs(Literal.class)) {
+                    var literal = node.asLiteral();
+                    try {
+                        String literalString = literal.getString();
+                        return Optional.of(Integer.parseInt(literalString));
+                    } catch (NotLiteral | NumberFormatException e) {
+                        logger.debug("Cannot parse property value to int: {}", literal.getValue());
+                        System.out.println("oof: " + literal.getValue());
+                    }
                 }
-
             }
         } finally {
             ontModel.leaveCriticalSection();

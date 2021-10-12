@@ -115,7 +115,7 @@ public class OrderedOntologyList implements List<Individual> {
         this.oc = oc;
         this.label = label;
         var listClassUri = oc.createUri(LIST_PREFIX, LIST_CLASS);
-        var listOpt = oc.getIndividual(label);
+        var listOpt = getListIndividualByLabel(label);
         if (listOpt.isPresent()) {
             listIndividual = listOpt.get();
             if (!oc.hasOntClass(listIndividual, listClassUri)) {
@@ -128,6 +128,18 @@ public class OrderedOntologyList implements List<Individual> {
             setLength(0);
         }
 
+    }
+
+    private Optional<Individual> getListIndividualByLabel(String label) {
+        var listClassUri = oc.createUri(LIST_PREFIX, LIST_CLASS);
+        var individuals = oc.getIndividualsOfClass(oc.getClassByIri(listClassUri).orElseThrow());
+        for (var individual : individuals) {
+            String individualLabel = individual.getLabel(null);
+            if (label.equalsIgnoreCase(individualLabel)) {
+                return Optional.of(individual);
+            }
+        }
+        return Optional.empty();
     }
 
     public Individual getListIndividual() {
@@ -239,7 +251,7 @@ public class OrderedOntologyList implements List<Individual> {
 
     @Override
     public int size() {
-        return oc.getPropertyIntValue(listIndividual, getLengthProperty()).orElse(-1);
+        return oc.getPropertyIntValue(listIndividual, getLengthProperty()).orElse(0);
     }
 
     @Override
@@ -407,9 +419,6 @@ public class OrderedOntologyList implements List<Individual> {
             return false;
         }
         var removedIndex = oc.getPropertyIntValue(individual, getIndexProperty()).orElse(-1);
-        if (removedIndex < 0) {
-            return false;
-        }
         var prevNode = oc.getPropertyValue(individual, getPreviousProperty());
         var nextNode = oc.getPropertyValue(individual, getNextProperty());
 
