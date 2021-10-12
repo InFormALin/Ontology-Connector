@@ -407,6 +407,9 @@ public class OrderedOntologyList implements List<Individual> {
             return false;
         }
         var removedIndex = oc.getPropertyIntValue(individual, getIndexProperty()).orElse(-1);
+        if (removedIndex < 0) {
+            return false;
+        }
         var prevNode = oc.getPropertyValue(individual, getPreviousProperty());
         var nextNode = oc.getPropertyValue(individual, getNextProperty());
 

@@ -1413,7 +1413,7 @@ public class OntologyConnector implements OntologyInterface {
                 var literal = node.asLiteral();
                 try {
                     return Optional.of(literal.getInt());
-                } catch (NotLiteral e) {
+                } catch (NotLiteral | NumberFormatException e) {
                     return Optional.empty();
                 }
 
