@@ -1417,7 +1417,6 @@ public class OntologyConnector implements OntologyInterface {
                         return Optional.of(Integer.parseInt(literalString));
                     } catch (NotLiteral | NumberFormatException e) {
                         logger.debug("Cannot parse property value to int: {}", literal.getValue());
-                        System.out.println("oof: " + literal.getValue());
                     }
                 }
             }
