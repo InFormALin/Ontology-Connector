@@ -749,6 +749,32 @@ public class OntologyConnector implements OntologyInterface {
     }
 
     /**
+     * Returns Individuals of the given class and all sub-classes of it (inherited)
+     *
+     * @param clazz (Super-) class of the individuals that should be returned
+     * @return List of individuals with the given (super-) class.
+     */
+    public List<Individual> getIndividualsOfClassInherited(OntClass clazz) {
+        ontModel.enterCriticalSection(Lock.READ);
+        StmtIterator individualStmtIterator = null;
+        try {
+            var infModel = getInfModel();
+            individualStmtIterator = infModel.listStatements(null, RDF.type, clazz);
+        } finally {
+            ontModel.leaveCriticalSection();
+        }
+
+        List<Individual> individuals = Lists.mutable.empty();
+        while (individualStmtIterator != null && individualStmtIterator.hasNext()) {
+            var stmt = individualStmtIterator.next();
+            var subject = stmt.getSubject();
+            var individual = ontModel.getIndividual(subject.getURI());
+            individuals.add(individual);
+        }
+        return individuals;
+    }
+
+    /**
      * Similar to {@link #getIndividualsOfClass(String)}, but also checks for inferred instances.
      *
      * @param className name of the class to retrieve individuals from
