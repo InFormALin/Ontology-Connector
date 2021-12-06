@@ -206,6 +206,9 @@ public class OrderedOntologyList implements List<Individual> {
     }
 
     private void setLength(int length) {
+        if (length < 0) {
+            length = 0;
+        }
         oc.setPropertyToIndividual(listIndividual, getLengthProperty(), length, XSD.nonNegativeInteger.toString());
     }
 

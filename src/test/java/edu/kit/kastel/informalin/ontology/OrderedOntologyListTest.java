@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 
 class OrderedOntologyListTest {
     private static String ontologyPath = "src/test/resources/mediastore.owl";
+    private static String ontologyWithTextPath = "src/test/resources/teammates_w_text.owl";
 
     private static final String TEST_LIST_LABEL = "TestList";
 
@@ -249,6 +250,20 @@ class OrderedOntologyListTest {
         Individual removedIndividual = olo.remove(1);
         Assertions.assertEquals(userdbadapter, removedIndividual);
         Assertions.assertEquals(2, olo.size(), "Size after removal does not match expected size");
+    }
+
+    @Test
+    @DisplayName("Clear List")
+    void clearListTest() {
+        ontologyConnector = createOntologyConnector(ontologyWithTextPath);
+        var olo = ontologyConnector.getListByIri("https://informalin.github.io/knowledgebases/examples/teammates.owl#qBkF5rSDSD").orElseThrow();
+
+        olo.clear();
+        Assertions.assertEquals(0, olo.size(), "Size after removal does not match expected size");
+        ontologyConnector.removeIndividual(olo.getListIndividual());
+
+        olo = ontologyConnector.getListByIri("https://informalin.github.io/knowledgebases/examples/teammates.owl#qBkF5rSDSD").orElse(null);
+        Assertions.assertNull(olo);
     }
 
 }
