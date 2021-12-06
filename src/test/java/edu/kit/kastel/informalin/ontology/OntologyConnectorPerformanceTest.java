@@ -8,6 +8,7 @@ import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -34,6 +35,7 @@ class OntologyConnectorPerformanceTest {
         ontologyConnector = null;
     }
 
+    @Disabled("Disabled for CI. Enable locally if you need this performance test")
     @Test
     @DisplayName("test performance of getClass by label")
     void getClassByLabelPerformanceTest() {
@@ -51,6 +53,7 @@ class OntologyConnectorPerformanceTest {
         logExecutionTime("getClass(label)", start, end);
     }
 
+    @Disabled("Disabled for CI. Enable locally if you need this performance test")
     @Test
     @DisplayName("test performance of getClass by localname")
     void getClassByLocalNamePerformanceTest() {
@@ -71,13 +74,13 @@ class OntologyConnectorPerformanceTest {
     @Test
     @DisplayName("test performance of getIndividual by label")
     void getIndividualByLabelPerformanceTest() {
-        String[] className = { "combined", "Text", "Those" };
-        String[] uri = { "https://informalin.github.io/knowledgebases/examples/teammates_w_text.owl#tjBKXKdjSW",
-                "https://informalin.github.io/knowledgebases/examples/teammates_w_text.owl#fie0ZGHk5i",
-                "https://informalin.github.io/knowledgebases/examples/teammates_w_text.owl#jJLFQ34HSk" };
+        String[] individualName = { "combined", "Service", "Those" };
+        String[] uri = { "https://informalin.github.io/knowledgebases/examples/teammates.owl#u4OKDhbdK7",
+                "https://informalin.github.io/knowledgebases/examples/teammates.owl#atGWKeJYJo",
+                "https://informalin.github.io/knowledgebases/examples/teammates.owl#aIaU9gbKPb" };
         var start = Instant.now();
         for (var i = 0; i < CALLS; i++) {
-            var individual = ontologyConnector.getIndividual(className[i % 3]);
+            var individual = ontologyConnector.getIndividual(individualName[i % 3]);
             Assertions.assertTrue(individual.isPresent());
             Assertions.assertEquals(uri[i % 3], individual.get().getURI());
         }
@@ -86,11 +89,11 @@ class OntologyConnectorPerformanceTest {
     }
 
     @Test
-    @DisplayName("test performance of getIndividual by label")
+    @DisplayName("test performance of getIndividual by uri")
     void getIndividualByUriPerformanceTest() {
-        String[] uri = { "https://informalin.github.io/knowledgebases/examples/teammates_w_text.owl#tjBKXKdjSW",
-                "https://informalin.github.io/knowledgebases/examples/teammates_w_text.owl#fie0ZGHk5i",
-                "https://informalin.github.io/knowledgebases/examples/teammates_w_text.owl#jJLFQ34HSk" };
+        String[] uri = { "https://informalin.github.io/knowledgebases/examples/teammates.owl#u4OKDhbdK7",
+                "https://informalin.github.io/knowledgebases/examples/teammates.owl#atGWKeJYJo",
+                "https://informalin.github.io/knowledgebases/examples/teammates.owl#aIaU9gbKPb" };
         var start = Instant.now();
         for (var i = 0; i < CALLS; i++) {
             var individual = ontologyConnector.getIndividualByIri(uri[i % 3]);
@@ -100,10 +103,11 @@ class OntologyConnectorPerformanceTest {
         logExecutionTime("getIndividual(Iri)", start, end);
     }
 
+    @Disabled("Disabled for CI. Enable locally if you need this performance test")
     @Test
     @DisplayName("test performance of list retrieval and iteration")
     void listPerformanceTest() {
-        var listUri = "https://informalin.github.io/knowledgebases/examples/teammates_w_text.owl#laKhK6RMlT";
+        var listUri = "https://informalin.github.io/knowledgebases/examples/teammates.owl#qBkF5rSDSD";
 
         var start = Instant.now();
         for (var i = 0; i < 100; i++) {
