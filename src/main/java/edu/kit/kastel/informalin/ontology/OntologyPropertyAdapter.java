@@ -238,4 +238,13 @@ interface OntologyPropertyAdapter {
      */
     void removeAllOfProperty(Resource resource, OntProperty property);
 
+    /**
+     * Adds a Property with a value to a given Individual.
+     *
+     * @param individual Individual the property should be added to
+     * @param property   Property that should be added
+     * @param value      Value that should be set for that property
+     */
+    Resource addPropertyToIndividual(Individual individual, OntProperty property, boolean value);
+
 }

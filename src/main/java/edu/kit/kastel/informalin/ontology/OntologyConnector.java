@@ -31,7 +31,6 @@ import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.StmtIterator;
 import org.apache.jena.reasoner.ReasonerRegistry;
-import org.apache.jena.reasoner.ValidityReport;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.shared.Lock;
 import org.apache.jena.vocabulary.OWL;
@@ -110,7 +109,7 @@ public class OntologyConnector implements OntologyInterface {
     @Override
     public boolean validateOntology() {
         var validationInfModel = ModelFactory.createRDFSModel(ontModel);
-        ValidityReport validity = validationInfModel.validate();
+        var validity = validationInfModel.validate();
         if (validity.isValid()) {
             return true;
         }
@@ -294,7 +293,7 @@ public class OntologyConnector implements OntologyInterface {
      */
     @Override
     public String createUri(String prefix, String suffix) {
-        String encodedSuffix = suffix;
+        var encodedSuffix = suffix;
         try {
             encodedSuffix = URLEncoder.encode(suffix, "UTF-8");
         } catch (UnsupportedEncodingException e) {
@@ -427,7 +426,7 @@ public class OntologyConnector implements OntologyInterface {
      */
     @Override
     public OntClass addClass(String className) {
-        Optional<OntClass> clazzOpt = getClass(className);
+        var clazzOpt = getClass(className);
         if (clazzOpt.isPresent()) {
             return clazzOpt.get();
         }
@@ -452,7 +451,7 @@ public class OntologyConnector implements OntologyInterface {
      */
     @Override
     public OntClass addClassByIri(String iri) {
-        Optional<OntClass> clazz = getClassByIri(iri);
+        var clazz = getClassByIri(iri);
         if (clazz.isPresent()) {
             return clazz.get();
         }
@@ -512,13 +511,12 @@ public class OntologyConnector implements OntologyInterface {
      */
     @Override
     public OntClass addSuperClass(String className, String superClassName) {
-        Optional<OntClass> superClassOpt = getClass(superClassName);
+        var superClassOpt = getClass(superClassName);
         if (superClassOpt.isPresent()) {
-            OntClass superClass = superClassOpt.get();
+            var superClass = superClassOpt.get();
             return addSubClass(className, superClass);
-        } else {
-            return addClass(className);
         }
+        return addClass(className);
     }
 
     /**
@@ -529,7 +527,7 @@ public class OntologyConnector implements OntologyInterface {
      */
     @Override
     public OntClass addSubClass(String className, OntClass superClass) {
-        OntClass clazz = addClass(className);
+        var clazz = addClass(className);
         ontModel.enterCriticalSection(Lock.WRITE);
         try {
             superClass.addSubClass(clazz);
@@ -724,11 +722,11 @@ public class OntologyConnector implements OntologyInterface {
      */
     @Override
     public List<Individual> getIndividualsOfClass(String className) {
-        Optional<OntClass> optClass = getClass(className);
+        var optClass = getClass(className);
         if (!optClass.isPresent()) {
             return Lists.mutable.empty();
         }
-        OntClass clazz = optClass.get();
+        var clazz = optClass.get();
         return getIndividualsOfClass(clazz);
     }
 
@@ -782,11 +780,11 @@ public class OntologyConnector implements OntologyInterface {
      */
     @Override
     public ImmutableList<Individual> getInferredIndividualsOfClass(String className) {
-        Optional<OntClass> optClass = getClass(className);
+        var optClass = getClass(className);
         if (!optClass.isPresent()) {
             return Lists.immutable.empty();
         }
-        OntClass clazz = optClass.get();
+        var clazz = optClass.get();
 
         StmtIterator stmts = null;
         ontModel.enterCriticalSection(Lock.READ);
@@ -1157,7 +1155,7 @@ public class OntologyConnector implements OntologyInterface {
      */
     @Override
     public OntProperty addProperty(String name) {
-        String uri = createUri(DEFAULT_PREFIX, name);
+        var uri = createUri(DEFAULT_PREFIX, name);
 
         ontModel.enterCriticalSection(Lock.WRITE);
         try {
@@ -1176,7 +1174,7 @@ public class OntologyConnector implements OntologyInterface {
      */
     @Override
     public DatatypeProperty addDataProperty(String name) {
-        String uri = createUri(DEFAULT_PREFIX, name);
+        var uri = createUri(DEFAULT_PREFIX, name);
         ontModel.enterCriticalSection(Lock.WRITE);
         try {
             return ontModel.createDatatypeProperty(uri);
@@ -1194,7 +1192,7 @@ public class OntologyConnector implements OntologyInterface {
      */
     @Override
     public ObjectProperty addObjectProperty(String name) {
-        String uri = createUri(DEFAULT_PREFIX, name);
+        var uri = createUri(DEFAULT_PREFIX, name);
         ontModel.enterCriticalSection(Lock.WRITE);
         try {
             return ontModel.createObjectProperty(uri);
@@ -1320,6 +1318,18 @@ public class OntologyConnector implements OntologyInterface {
     }
 
     /**
+     * Adds a Property with a value to a given Individual.
+     *
+     * @param individual Individual the property should be added to
+     * @param property   Property that should be added
+     * @param value      Value that should be set for that property
+     */
+    @Override
+    public Resource addPropertyToIndividual(Individual individual, OntProperty property, boolean value) {
+        return addPropertyToIndividual(individual, property, value, XSD.xboolean.toString());
+    }
+
+    /**
      * Sets a Property with a value to a given Individual.
      *
      * @param individual Individual the property should be set
@@ -1439,7 +1449,7 @@ public class OntologyConnector implements OntologyInterface {
                 if (node.canAs(Literal.class)) {
                     var literal = node.asLiteral();
                     try {
-                        String literalString = literal.getString();
+                        var literalString = literal.getString();
                         return Optional.of(Integer.parseInt(literalString));
                     } catch (NotLiteral | NumberFormatException e) {
                         logger.debug("Cannot parse property value to int: {}", literal.getValue());
@@ -1757,7 +1767,7 @@ public class OntologyConnector implements OntologyInterface {
         if (obj == null || obj.getClass() != this.getClass()) {
             return false;
         }
-        OntologyConnector other = (OntologyConnector) obj;
+        var other = (OntologyConnector) obj;
         return Objects.equals(pathToOntology, other.pathToOntology);
     }
 
